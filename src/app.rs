@@ -12,7 +12,7 @@ use crate::{
     },
     settings::Settings,
     tab::Tab,
-    ui::ui,
+    ui::ui::ui,
 };
 
 pub struct App {
@@ -29,7 +29,7 @@ pub struct App {
 
     pub buf: String,
 
-    command_action: CommandAction,
+    pub command_action: CommandAction,
 
     pub key_event: KeyEvent,
     pub cursor: (usize, usize),

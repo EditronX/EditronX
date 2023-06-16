@@ -1,25 +1,37 @@
-use crate::enums::BufferType;
+use crate::enums::{BufferType, Size};
 
 pub struct Buffer {
-    size: (usize, usize),
-    is_float: bool,
-    rows: Vec<String>,
-    title: String,
-    cursor: (usize, usize),
-    offset: (usize, usize),
-    buffer_type: BufferType,
+    pub size: Size,
+    pub is_float: bool,
+    pub rows: Vec<String>,
+    pub title: String,
+    pub cursor: (usize, usize),
+    pub offset: (usize, usize),
+    pub buffer_type: BufferType,
+    pub hidden: bool,
+    pub pos: (usize, usize),
 }
 
 impl Buffer {
     pub fn new() -> Buffer {
         Buffer {
-            size: (0, 0),
+            size: Size::Absolute(0, 0),
+            pos: (0, 0),
             is_float: false,
             rows: Vec::new(),
-            title: String::new(),
+            title: String::from("[No Name]"),
             cursor: (0, 0),
             offset: (0, 0),
             buffer_type: BufferType::Buffer,
+            hidden: false,
         }
+    }
+
+    pub fn set_size(&mut self, size: Size) {
+        self.size = size;
+    }
+
+    pub fn set_pos(&mut self, x: usize, y: usize) {
+        self.pos = (x, y);
     }
 }

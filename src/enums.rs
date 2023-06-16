@@ -1,6 +1,5 @@
 use crate::editor::Editor;
 
-#[derive(Debug, Clone, Copy)]
 pub enum CommandAction {
     Command,
     Error,
@@ -25,4 +24,26 @@ pub enum LineNumber {
     Relative,
     Absolute,
     None,
+}
+
+pub enum ShowTab {
+    Always,
+    Multiple,
+    Never,
+}
+
+#[derive(Clone, Copy)]
+pub enum Size {
+    Absolute(usize, usize),
+    Percent(usize, usize),
+}
+
+pub enum SplitVert {
+    Left,
+    Right,
+}
+
+pub enum SplitHorz {
+    Top,
+    Bottom,
 }
