@@ -26,11 +26,14 @@ pub fn handle_command_mode(app: &mut App, close: &mut bool) -> Result<()> {
 
             match command {
                 "q" => *close = true,
+                "vnew" => app.tabs[app.active_index].vertical_new(app.settings.split_direction.0),
                 _ => {
-                    app.set_error(format!("{}: command not found", app.command));
-                    app.command.clear();
+                    app.set_error(format!("{}: command not found", &app.command[1..]));
                 }
             };
+
+            app.mode = crate::enums::Mode::Normal;
+            app.command.clear();
         }
 
         _ => {}

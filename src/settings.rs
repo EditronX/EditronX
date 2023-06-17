@@ -1,5 +1,6 @@
 use crate::enums::{LineNumber, ShowTab, SplitHorz, SplitVert};
 
+#[derive(Clone, Copy)]
 pub struct Settings {
     pub line_number: LineNumber,
     pub borders: (bool, bool), // tabs, editor

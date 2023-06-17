@@ -20,12 +20,14 @@ pub enum BufferType {
     Buffer,
 }
 
+#[derive(Clone, Copy)]
 pub enum LineNumber {
     Relative,
     Absolute,
     None,
 }
 
+#[derive(Clone, Copy)]
 pub enum ShowTab {
     Always,
     Multiple,
@@ -38,11 +40,13 @@ pub enum Size {
     Percent(usize, usize),
 }
 
+#[derive(Clone, Copy)]
 pub enum SplitVert {
     Left,
     Right,
 }
 
+#[derive(Clone, Copy)]
 pub enum SplitHorz {
     Top,
     Bottom,

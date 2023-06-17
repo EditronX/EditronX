@@ -9,7 +9,7 @@ use crate::{
     enums::{CommandAction, Mode, ShowTab},
 };
 
-use super::{command_ui::command_ui, tabs_ui::tabs_ui};
+use super::{command_ui::command_ui, editor_ui::editor_ui, tabs_ui::tabs_ui};
 
 pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
     let mut chunks_list = vec![
@@ -43,6 +43,25 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
         ShowTab::Always => {
             frame.render_widget(tabs_ui(app), chunks[0]);
         }
+    }
+
+    app.editor_size = (
+        chunks[chunks_list.len() - 2].width as usize,
+        if app.settings.borders.0 {
+            chunks[chunks_list.len() - 2].height as usize - 3
+        } else {
+            chunks[chunks_list.len() - 2].height as usize - 1
+        },
+    );
+
+    // set editor size
+    app.editor_size = (
+        chunks[chunks_list.len() - 2].width as usize,
+        chunks[chunks_list.len() - 2].height as usize,
+    );
+
+    for (rows_list, rect) in editor_ui(app) {
+        frame.render_widget(rows_list, rect);
     }
 
     frame.render_widget(command_ui(app), chunks[chunks.len() - 1]);

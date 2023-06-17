@@ -1,4 +1,4 @@
 pub struct Editor {
-    filepath: String,
-    text: String,
+    pub filepath: String,
+    pub text: String,
 }
