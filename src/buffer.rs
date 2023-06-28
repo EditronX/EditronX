@@ -1,9 +1,9 @@
 use tui::buffer::Cell;
 
-use crate::enums::{BufferType, Size};
+use crate::enums::{BufferType, Dimensions};
 
 pub struct Buffer {
-    pub size: Size,
+    pub size: Dimensions,
     pub is_float: bool,
     pub rows: Vec<Cell>,
     pub title: String,
@@ -11,11 +11,11 @@ pub struct Buffer {
     pub offset: (usize, usize),
     pub buffer_type: BufferType,
     pub hidden: bool,
-    pub pos: (usize, usize),
+    pub pos: Dimensions,
 }
 
 impl Buffer {
-    pub fn new(size: Size, pos: (usize, usize)) -> Buffer {
+    pub fn new(size: Dimensions, pos: Dimensions) -> Buffer {
         Buffer {
             size,
             pos,

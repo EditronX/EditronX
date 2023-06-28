@@ -1,7 +1,7 @@
 use tui::{
     style::Style,
     text::{Span, Spans},
-    widgets::{Block, Borders, Tabs},
+    widgets::Tabs,
 };
 
 use crate::app::App;
@@ -31,14 +31,7 @@ pub fn tabs_ui(app: &mut App) -> Tabs {
         })
         .collect();
 
-    let block = if app.settings.show_tab_title {
-        Block::default().borders(Borders::ALL).title("Tabs")
-    } else {
-        Block::default().borders(Borders::ALL)
-    };
-
     let tabs = Tabs::new(tab_titles)
-        .block(block)
         .select(app.active_index)
         .highlight_style(Style::default().fg(tui::style::Color::Yellow));
 

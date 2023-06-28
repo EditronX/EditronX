@@ -35,9 +35,9 @@ pub enum ShowTab {
 }
 
 #[derive(Clone, Copy)]
-pub enum Size {
+pub enum Dimensions {
     Absolute(usize, usize),
-    Percent(usize, usize),
+    Percent(f32, f32),
 }
 
 #[derive(Clone, Copy)]

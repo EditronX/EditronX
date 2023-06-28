@@ -13,7 +13,7 @@ use super::{command_ui::command_ui, editor_ui::editor_ui, tabs_ui::tabs_ui};
 
 pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
     let mut chunks_list = vec![
-        Constraint::Length(if app.settings.borders.0 { 3 } else { 1 }),
+        Constraint::Length(1),
         Constraint::Min(1),
         Constraint::Length(1),
     ];
@@ -47,11 +47,7 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
 
     app.editor_size = (
         chunks[chunks_list.len() - 2].width as usize,
-        if app.settings.borders.0 {
-            chunks[chunks_list.len() - 2].height as usize - 3
-        } else {
-            chunks[chunks_list.len() - 2].height as usize - 1
-        },
+        chunks[chunks_list.len() - 2].height as usize - 1,
     );
 
     // set editor size

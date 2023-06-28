@@ -1,6 +1,6 @@
 use crate::{
     buffer::Buffer,
-    enums::{Size, SplitVert},
+    enums::{Dimensions, SplitVert},
 };
 
 pub struct Tab {
@@ -11,53 +11,53 @@ pub struct Tab {
 impl Tab {
     pub fn new() -> Self {
         Self {
-            buflist: vec![Buffer::new(Size::Percent(100, 100), (0, 0))],
+            buflist: vec![Buffer::new(
+                Dimensions::Percent(100.0, 100.0),
+                Dimensions::Percent(0.0, 0.0),
+            )],
             active_index: 0,
         }
     }
 
     pub fn vertical_new(&mut self, split_direction: SplitVert) {
-        let prev_buf = &mut self.buflist[self.active_index];
+        let mut active_buffer = &mut self.buflist[self.active_index];
 
-        let mut x = 0;
-        let _x = x; // just to remove the annoying warning that overwritten before use
-        let y = prev_buf.pos.1;
-
-        let term_size = crossterm::terminal::size().expect("Failed to get terminal size");
-
-        let new_size = match prev_buf.size {
-            Size::Absolute(w, h) => match split_direction {
-                SplitVert::Left => {
-                    x = prev_buf.pos.0;
-                    prev_buf.pos.0 += w / 2;
-
-                    Size::Absolute(w / 2, h)
-                }
-                SplitVert::Right => {
-                    x = prev_buf.pos.0 + (w / 2);
-
-                    Size::Absolute(w / 2, h)
-                }
-            },
-            Size::Percent(w, h) => match split_direction {
-                SplitVert::Left => {
-                    x = prev_buf.pos.0;
-                    prev_buf.pos.0 += w / 200 * term_size.0 as usize;
-
-                    Size::Percent(w / 2, h)
-                }
-                SplitVert::Right => {
-                    x = prev_buf.pos.0 + (w / 200 * term_size.0 as usize);
-
-                    Size::Percent(w / 2, h)
-                }
-            },
+        let pos_change_factor = match active_buffer.size {
+            Dimensions::Percent(width, _height) => width as f32 / 2.0,
+            Dimensions::Absolute(width, _height) => width as f32 / 2.0,
         };
 
-        prev_buf.size = new_size.clone();
+        active_buffer.size = match active_buffer.size {
+            Dimensions::Percent(width, height) => Dimensions::Percent(width as f32 / 2.0, height),
+            Dimensions::Absolute(width, height) => Dimensions::Absolute(width / 2, height),
+        };
 
-        let buffer = Buffer::new(new_size, (x, y));
-        self.buflist.push(buffer);
+        let new_size = active_buffer.size.clone();
+
+        let mut new_pos = active_buffer.pos.clone();
+
+        match split_direction {
+            SplitVert::Left => {
+                active_buffer.pos = match active_buffer.pos {
+                    Dimensions::Percent(x, y) => Dimensions::Percent(x + pos_change_factor, y),
+                    Dimensions::Absolute(x, y) => {
+                        Dimensions::Absolute(x + pos_change_factor as usize, y)
+                    }
+                }
+            }
+            SplitVert::Right => {
+                new_pos = match new_pos {
+                    Dimensions::Absolute(x, y) => {
+                        Dimensions::Absolute(x + pos_change_factor as usize, y)
+                    }
+                    Dimensions::Percent(x, y) => Dimensions::Percent(x + pos_change_factor, y),
+                }
+            }
+        }
+
+        let new_buffer = Buffer::new(new_size, new_pos);
+
+        self.buflist.push(new_buffer);
         self.active_index = self.buflist.len() - 1;
     }
 }

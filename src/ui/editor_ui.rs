@@ -1,59 +1,44 @@
 use tui::{
     layout::Rect,
-    widgets::{Block, Borders, List, ListItem},
+    style::{Color, Style},
+    widgets::{Block, List, ListItem},
 };
 
-use crate::{app::App, enums::Size};
+use crate::{app::App, enums::Dimensions};
 
 pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
     let tab = &app.tabs[app.active_index];
 
     let mut list: Vec<(List, Rect)> = vec![];
 
-    for buffer in tab.buflist.iter() {
-        let rows = vec![ListItem::new("Row1"), ListItem::new("Row2")];
-        let rows_list = List::new(rows).block(Block::default().borders(Borders::ALL));
+    for (i, buffer) in tab.buflist.iter().enumerate() {
+        let rows: Vec<ListItem<'_>> = vec![ListItem::new("Row1"), ListItem::new("Row2")];
+        let rows = List::new(rows).block(Block::default().style(Style::default().bg(Color::Rgb(
+            50 * i as u8,
+            150 + 10 * i as u8,
+            200,
+        ))));
 
-        let size = match buffer.size {
-            Size::Percent(x, y) => {
-                let width = x / 100 * app.editor_size.0;
-                let height = y / 100 * app.editor_size.1;
-
-                (width, height)
-            }
-            Size::Absolute(x, y) => (x, y),
+        let (width, height) = match buffer.size {
+            Dimensions::Absolute(w, h) => (w as f32, h as f32),
+            Dimensions::Percent(w, h) => (
+                w * app.editor_size.0 as f32 / 100.0,
+                h * app.editor_size.1 as f32 / 100.0,
+            ),
         };
 
-        let rect = Rect::new(
-            buffer.pos.0 as u16,
-            if app.settings.borders.0 {
-                (buffer.pos.1 + 3) as u16
-            } else {
-                (buffer.pos.1 + 1) as u16
-            },
-            size.0 as u16,
-            size.1 as u16,
-            // 10,
-            // 10,
-        );
+        let (x, y) = match buffer.pos {
+            Dimensions::Absolute(x, y) => (x, y),
+            Dimensions::Percent(x, y) => (
+                x as usize * app.editor_size.0 / 100,
+                y as usize * app.editor_size.1 / 100,
+            ),
+        };
 
-        list.push((rows_list, rect));
+        let rect = Rect::new(x as u16, 1 + y as u16, width as u16, height as u16);
+
+        list.push((rows, rect))
     }
-
-    // let block1 = Block::default().title("Block 1").borders(Borders::ALL);
-    // let block2 = Block::default().title("Block 2").borders(Borders::ALL);
-    //
-    // let rect1 = Rect::new(0, 3, app.editor_size.0 as u16 / 2, app.editor_size.1 as u16);
-    //
-    // let rect2 = Rect::new(
-    //     app.editor_size.0 as u16 / 2 + 1,
-    //     3,
-    //     app.editor_size.0 as u16 / 2,
-    //     app.editor_size.1 as u16,
-    // );
-    //
-    // list.push((block1, rect1));
-    // list.push((block2, rect2));
 
     list
 }
