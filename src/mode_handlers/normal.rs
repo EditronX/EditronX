@@ -1,9 +1,12 @@
 use std::io::Result;
 
-use crate::app::App;
+use crate::{app::App, functions::*};
 
-pub fn handle_normal_mode(app: &mut App, _close: &mut bool) -> Result<()> {
+pub fn handle_normal_mode(app: &mut App, close: &mut bool) -> Result<()> {
     match app.key_event.code {
+        crossterm::event::KeyCode::Tab => next_tab("", close, app),
+        crossterm::event::KeyCode::BackTab => prev_tab("", close, app),
+
         crossterm::event::KeyCode::Char(ch) => match ch {
             ':' => {
                 app.command = String::from(":");

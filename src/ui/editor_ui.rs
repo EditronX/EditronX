@@ -1,6 +1,5 @@
 use tui::{
     layout::Rect,
-    style::{Color, Style},
     widgets::{Block, List, ListItem},
 };
 
@@ -11,13 +10,11 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
 
     let mut list: Vec<(List, Rect)> = vec![];
 
-    for (i, buffer) in tab.buflist.iter().enumerate() {
+    for (_i, buffer) in tab.buflist.iter().enumerate() {
         let rows: Vec<ListItem<'_>> = vec![ListItem::new("Row1"), ListItem::new("Row2")];
-        let rows = List::new(rows).block(Block::default().style(Style::default().bg(Color::Rgb(
-            50 * i as u8,
-            150 + 10 * i as u8,
-            200,
-        ))));
+        let rows = List::new(rows).block(Block::default().style(tui::style::Style::default().bg(
+            tui::style::Color::Rgb(_i as u8 * 10, _i as u8 * 20, _i as u8 * 50),
+        )));
 
         let (width, height) = match buffer.size {
             Dimensions::Absolute(w, h) => (w as f32, h as f32),

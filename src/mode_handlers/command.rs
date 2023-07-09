@@ -2,7 +2,7 @@ use std::io::Result;
 
 use crossterm::event;
 
-use crate::app::App;
+use crate::{app::App, functions::new_tab};
 
 pub fn handle_command_mode(app: &mut App, close: &mut bool) -> Result<()> {
     match app.key_event.code {
@@ -27,6 +27,7 @@ pub fn handle_command_mode(app: &mut App, close: &mut bool) -> Result<()> {
             match command {
                 "q" => *close = true,
                 "vnew" => app.tabs[app.active_index].vertical_new(app.settings.split_direction.0),
+                "tabnew" => new_tab("", close, app),
                 _ => {
                     app.set_error(format!("{}: command not found", &app.command[1..]));
                 }

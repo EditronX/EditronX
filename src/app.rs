@@ -73,12 +73,6 @@ impl App {
             if let Event::Key(key_event) = event::read()? {
                 self.key_event = key_event;
 
-                if let KeyCode::Char(c) = key_event.code {
-                    if c == 'a' {
-                        self.tabs[self.active_index].vertical_new(self.settings.split_direction.0)
-                    }
-                }
-
                 match self.mode {
                     Mode::Normal => handle_normal_mode(self, &mut close)?,
                     Mode::Insert => handle_insert_mode(self, &mut close)?,
