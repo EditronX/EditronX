@@ -1,3 +1,5 @@
+use crossterm::cursor::SetCursorStyle;
+
 use crate::enums::{LineNumber, ShowTab, SplitHorz, SplitVert};
 
 #[derive(Clone, Copy)]
@@ -6,6 +8,8 @@ pub struct Settings {
     pub show_tabs: ShowTab,
     pub tab_numbering: bool,
     pub split_direction: (SplitVert, SplitHorz),
+    pub insert_mode_cursor: SetCursorStyle,
+    pub normal_mode_cursor: SetCursorStyle,
 }
 
 impl Settings {
@@ -15,6 +19,8 @@ impl Settings {
             show_tabs: ShowTab::Always,
             tab_numbering: true,
             split_direction: (SplitVert::Right, SplitHorz::Bottom),
+            insert_mode_cursor: SetCursorStyle::BlinkingBar,
+            normal_mode_cursor: SetCursorStyle::SteadyBlock,
         }
     }
 }

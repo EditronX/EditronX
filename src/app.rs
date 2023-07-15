@@ -32,16 +32,23 @@ pub struct App {
     pub command_action: CommandAction,
 
     pub key_event: KeyEvent,
-    pub cursor: (usize, usize),
-    pub editor_size: (usize, usize),
+    editor_size: (usize, usize),
 
     pub settings: Settings,
 }
 
 impl App {
     pub fn new() -> Self {
+        let (width, height) = crossterm::terminal::size().unwrap_or((0, 0));
+        let settings = Settings::new();
+
+        let tab_height = match settings.show_tabs {
+            crate::enums::ShowTab::Never => height - 1,
+            _ => height - 2,
+        };
+
         Self {
-            tabs: vec![Tab::new()],
+            tabs: vec![Tab::new(width as usize, tab_height as usize)],
 
             mode: Mode::Normal,
 
@@ -57,10 +64,21 @@ impl App {
             active_index: 0,
 
             key_event: KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE),
-            cursor: (0, 0),
-            editor_size: (0, 0),
+            editor_size: (width as usize, height as usize),
 
-            settings: Settings::new(),
+            settings,
+        }
+    }
+
+    pub fn get_editor_size(&self) -> (usize, usize) {
+        self.editor_size
+    }
+
+    pub fn set_editor_size(&mut self, width: usize, height: usize) {
+        self.editor_size = (width, height);
+
+        for tab in &mut self.tabs {
+            tab.set_tab_size(width, height);
         }
     }
 

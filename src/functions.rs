@@ -1,7 +1,9 @@
 use crate::{app::App, tab::Tab};
 
 pub fn new_tab(_input: &str, _close: &mut bool, app: &mut App) {
-    app.tabs.push(Tab::new());
+    let (width, height) = app.get_editor_size();
+
+    app.tabs.push(Tab::new(width, height));
 }
 
 pub fn next_tab(_input: &str, _close: &mut bool, app: &mut App) {

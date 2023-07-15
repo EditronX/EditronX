@@ -13,7 +13,6 @@ mod editor;
 mod enums;
 mod functions;
 mod mode_handlers;
-mod quadlist;
 mod settings;
 mod tab;
 mod ui;

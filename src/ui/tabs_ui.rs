@@ -23,7 +23,7 @@ pub fn tabs_ui(app: &mut App) -> Tabs {
             Spans::from(vec![Span::styled(
                 tab_title(
                     app.settings.tab_numbering,
-                    app.tabs[i].buflist[app.tabs[i].active_index].title.clone(),
+                    app.tabs[i].buflist[app.tabs[i].active_buf].title.clone(),
                     i,
                 ),
                 Style::default(),

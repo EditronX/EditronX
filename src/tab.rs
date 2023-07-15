@@ -1,36 +1,30 @@
-use crate::{
-    buffer::Buffer,
-    enums::{Dimensions, SplitVert},
-};
+use crate::{buffer::Buffer, enums::SplitVert};
 
 pub struct Tab {
     pub buflist: Vec<Buffer>,
-    pub active_index: usize,
+    pub active_buf: usize,
+    tab_size: (usize, usize),
 }
 
 impl Tab {
-    pub fn new() -> Self {
+    pub fn new(width: usize, height: usize) -> Self {
         Self {
-            buflist: vec![Buffer::new(
-                Dimensions::Percent(100.0, 100.0),
-                Dimensions::Percent(0.0, 0.0),
-            )],
-            active_index: 0,
+            buflist: vec![Buffer::new((width, height), (0.0, 0.0))],
+            active_buf: 0,
+            tab_size: (width, height),
         }
     }
 
+    pub fn set_tab_size(&mut self, width: usize, height: usize) {
+        self.tab_size = (width, height)
+    }
+
     pub fn vertical_new(&mut self, split_direction: SplitVert) {
-        let mut active_buffer = &mut self.buflist[self.active_index];
+        let mut active_buffer = &mut self.buflist[self.active_buf];
 
-        let pos_change_factor = match active_buffer.size {
-            Dimensions::Percent(width, _height) => width as f32 / 2.0,
-            Dimensions::Absolute(width, _height) => width as f32 / 2.0,
-        };
+        let pos_change_factor = (active_buffer.size.0 / 2) as f32;
 
-        active_buffer.size = match active_buffer.size {
-            Dimensions::Percent(width, height) => Dimensions::Percent(width as f32 / 2.0, height),
-            Dimensions::Absolute(width, height) => Dimensions::Absolute(width / 2, height),
-        };
+        active_buffer.size.0 /= 2;
 
         let new_size = active_buffer.size.clone();
 
@@ -38,26 +32,14 @@ impl Tab {
 
         match split_direction {
             SplitVert::Left => {
-                active_buffer.pos = match active_buffer.pos {
-                    Dimensions::Percent(x, y) => Dimensions::Percent(x + pos_change_factor, y),
-                    Dimensions::Absolute(x, y) => {
-                        Dimensions::Absolute(x + pos_change_factor as usize, y)
-                    }
-                }
+                active_buffer.pos = (active_buffer.pos.0 + pos_change_factor, active_buffer.pos.1)
             }
-            SplitVert::Right => {
-                new_pos = match new_pos {
-                    Dimensions::Absolute(x, y) => {
-                        Dimensions::Absolute(x + pos_change_factor as usize, y)
-                    }
-                    Dimensions::Percent(x, y) => Dimensions::Percent(x + pos_change_factor, y),
-                }
-            }
+            SplitVert::Right => new_pos = (new_pos.0 + pos_change_factor, new_pos.1),
         }
 
         let new_buffer = Buffer::new(new_size, new_pos);
 
         self.buflist.push(new_buffer);
-        self.active_index = self.buflist.len() - 1;
+        self.active_buf = self.buflist.len() - 1;
     }
 }

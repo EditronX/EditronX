@@ -6,6 +6,13 @@ pub enum CommandAction {
     Info,
 }
 
+pub enum MoveDirection {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 pub enum Mode {
     Normal,
     Insert,
@@ -32,12 +39,6 @@ pub enum ShowTab {
     Always,
     Multiple,
     Never,
-}
-
-#[derive(Clone, Copy)]
-pub enum Dimensions {
-    Absolute(usize, usize),
-    Percent(f32, f32),
 }
 
 #[derive(Clone, Copy)]
