@@ -51,11 +51,6 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
         }
     }
 
-    app.set_editor_size(
-        chunks[chunks_list.len() - 2].width as usize,
-        chunks[chunks_list.len() - 2].height as usize - 1,
-    );
-
     // set editor size
     app.set_editor_size(
         chunks[chunks_list.len() - 2].width as usize,
@@ -67,8 +62,6 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
     }
 
     frame.render_widget(command_ui(app), chunks[chunks.len() - 1]);
-
-    app.command_action = CommandAction::Command;
 
     let tab = &mut app.tabs[app.active_index];
     let buffer = &mut tab.buflist[tab.active_buf];
