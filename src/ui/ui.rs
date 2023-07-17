@@ -1,9 +1,6 @@
 use std::io::stdout;
 
-use crossterm::{
-    cursor::{self, SetCursorStyle},
-    execute,
-};
+use crossterm::{cursor::SetCursorStyle, execute};
 use tui::{
     backend::Backend,
     layout::{Constraint, Layout},
@@ -12,7 +9,7 @@ use tui::{
 
 use crate::{
     app::App,
-    enums::{CommandAction, Mode, ShowTab},
+    enums::{Mode, ShowTab},
 };
 
 use super::{command_ui::command_ui, editor_ui::editor_ui, tabs_ui::tabs_ui};
