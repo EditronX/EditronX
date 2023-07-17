@@ -103,15 +103,12 @@ impl Buffer {
 
         match direction {
             MoveDirection::Up => {
-                if *cursor_y > steps {
+                if *cursor_y >= steps {
                     *cursor_y -= steps;
                 } else {
-                    *offset_y += steps - *cursor_y;
-                    *cursor_y = 0;
+                    *offset_y = offset_y.saturating_sub(steps - *cursor_y);
+                    *cursor_y = 0
                 }
-
-                // println!("{}", *cursor_y + *offset_y);
-                println!("{}", *cursor_y);
 
                 if self.rows[*cursor_y + *offset_y].len() < *cursor_x {
                     *cursor_x = self.rows[*cursor_y + *offset_y].len();
@@ -127,6 +124,11 @@ impl Buffer {
                     }
                 }
             }
+
+            // MoveDirection::Right => {
+            //     *
+            // }
+
             // MoveDirection::Left => {
             //     *cursor_x -= if *cursor_x > 0 { 1 } else { 0 };
             //     if *cursor_x < *offset_x {
