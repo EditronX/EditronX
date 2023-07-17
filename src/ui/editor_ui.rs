@@ -14,7 +14,7 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
 
     let mut list: Vec<(List, Rect)> = vec![];
 
-    for (_i, buffer) in tab.buflist.iter().enumerate() {
+    for buffer in tab.buflist.iter() {
         // line numbers
         let line_numbers: Vec<ListItem> = match app.settings.line_number {
             LineNumber::Absolute => buffer
