@@ -2,6 +2,8 @@ use tui::{buffer::Cell, style::Modifier};
 
 use crate::enums::{BufferType, MoveDirection};
 
+static mut CURSOR_X_POS: usize = 0;
+
 pub struct Buffer {
     pub size: (usize, usize),
     pub is_float: bool,
@@ -20,7 +22,7 @@ impl Buffer {
             size,
             pos,
             is_float: false,
-            rows: vec![],
+            rows: vec![vec![]],
             title: String::from("[No Name]"),
             cursor: (0, 0),
             offset: (0, 0),
@@ -104,14 +106,27 @@ impl Buffer {
                 if *cursor_y > steps {
                     *cursor_y -= steps;
                 } else {
-                    *offset_y = steps - *cursor_y;
-
+                    *offset_y += steps - *cursor_y;
                     *cursor_y = 0;
                 }
+
+                // println!("{}", *cursor_y + *offset_y);
+                println!("{}", *cursor_y);
+
+                if self.rows[*cursor_y + *offset_y].len() < *cursor_x {
+                    *cursor_x = self.rows[*cursor_y + *offset_y].len();
+                }
             }
-            // MoveDirection::Down => {
-            //
-            // }
+            MoveDirection::Down => {
+                if *cursor_y + *offset_y + steps <= self.rows.len() {
+                    if *cursor_y + steps >= self.size.1 {
+                        // *offset_y += steps - (self.size.1 - *cursor_y);
+                        // *cursor_y = self.size.1;
+                    } else {
+                        *cursor_y += steps;
+                    }
+                }
+            }
             // MoveDirection::Left => {
             //     *cursor_x -= if *cursor_x > 0 { 1 } else { 0 };
             //     if *cursor_x < *offset_x {
