@@ -78,10 +78,13 @@ impl Buffer {
             let current_row = &mut self.rows[*cursor_y + *offset_y];
             let current_pos = *cursor_x + *offset_x;
 
-            current_row.splice(current_pos..current_pos, Self::string_to_cells(text));
+            current_row.splice(
+                current_pos..current_pos,
+                Self::string_to_cells(text.clone()),
+            );
         }
 
-        *cursor_x += 1;
+        *cursor_x += text.len();
     }
 
     pub fn add_text(&mut self, text: String) {
@@ -101,6 +104,11 @@ impl Buffer {
         let offset_x = &mut self.offset.0;
         let offset_y = &mut self.offset.1;
 
+        let current_row = *cursor_y + *offset_y;
+
+        let size_x = self.size.0;
+        let size_y = self.size.1;
+
         match direction {
             MoveDirection::Up => {
                 if *cursor_y >= steps {
@@ -110,42 +118,51 @@ impl Buffer {
                     *cursor_y = 0
                 }
 
-                if self.rows[*cursor_y + *offset_y].len() < *cursor_x {
-                    *cursor_x = self.rows[*cursor_y + *offset_y].len();
+                if self.rows[current_row].len() < *cursor_x {
+                    *cursor_x = self.rows[current_row].len();
                 }
             }
             MoveDirection::Down => {
-                if *cursor_y + *offset_y + steps <= self.rows.len() {
-                    if *cursor_y + steps >= self.size.1 {
-                        // *offset_y += steps - (self.size.1 - *cursor_y);
-                        // *cursor_y = self.size.1;
-                    } else {
-                        *cursor_y += steps;
+                if *cursor_y + steps >= size_y {
+                    *offset_y += steps - (size_y - *cursor_y);
+                    *cursor_y = size_y;
+
+                    if *cursor_y + *offset_y > self.rows.len() - 1 {
+                        *offset_y = self.rows.len() - 1 - *cursor_y;
+                    }
+                } else {
+                    *cursor_y += steps;
+
+                    if *cursor_y + *offset_y > self.rows.len() - 1 {
+                        *cursor_y = self.rows.len() - 1 - *offset_y;
                     }
                 }
             }
 
-            // MoveDirection::Right => {
-            //     *
-            // }
+            MoveDirection::Left => {
+                if *cursor_x >= steps {
+                    *cursor_x -= steps;
+                } else {
+                    *offset_x = offset_x.saturating_sub(steps - *cursor_x);
+                    *cursor_x = 0;
+                }
+            }
+            MoveDirection::Right => {
+                if *cursor_x + steps >= size_x {
+                    *offset_x += steps - (size_x - *cursor_x);
+                    *cursor_x = size_x;
 
-            // MoveDirection::Left => {
-            //     *cursor_x -= if *cursor_x > 0 { 1 } else { 0 };
-            //     if *cursor_x < *offset_x {
-            //         *offset_x -= if *offset_x > 0 { 1 } else { 0 };
-            //     }
-            // }
-            // MoveDirection::Right => {
-            //     *cursor_x += if *cursor_x < self.rows[*cursor_y].len() - 1 {
-            //         1
-            //     } else {
-            //         0
-            //     };
-            //     if *cursor_x >= self.size.width + *offset_x {
-            //         *offset_x += 1;
-            //     }
-            // }
-            _ => {}
+                    if *cursor_x + *offset_x > self.rows[current_row].len() {
+                        *offset_x = self.rows[current_row].len() - *cursor_x;
+                    }
+                } else {
+                    *cursor_x += steps;
+
+                    if *cursor_x + *offset_x > self.rows[current_row].len() {
+                        *cursor_x = self.rows[current_row].len() - *offset_x;
+                    }
+                }
+            }
         }
     }
 }

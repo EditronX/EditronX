@@ -22,6 +22,7 @@ pub fn handle_normal_mode(app: &mut App, close: &mut bool) -> Result<()> {
             'h' => current_buf.move_cursor(crate::enums::MoveDirection::Left, 1),
             'k' => current_buf.move_cursor(crate::enums::MoveDirection::Up, 1),
             'j' => current_buf.move_cursor(crate::enums::MoveDirection::Down, 1),
+            'l' => current_buf.move_cursor(crate::enums::MoveDirection::Right, 1),
             _ => {}
         },
         _ => {}
