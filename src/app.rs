@@ -43,8 +43,8 @@ impl App {
         let settings = Settings::new();
 
         let tab_height = match settings.show_tabs {
-            crate::enums::ShowTab::Never => height - 1,
-            _ => height - 2,
+            crate::enums::ShowTab::Always => height - 2,
+            _ => height - 1,
         };
 
         Self {
