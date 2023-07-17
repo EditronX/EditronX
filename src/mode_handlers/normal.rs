@@ -20,6 +20,8 @@ pub fn handle_normal_mode(app: &mut App, close: &mut bool) -> Result<()> {
             }
             'i' => app.mode = Mode::Insert,
             'h' => current_buf.move_cursor(crate::enums::MoveDirection::Left, 1),
+            'k' => current_buf.move_cursor(crate::enums::MoveDirection::Up, 1),
+            'j' => current_buf.move_cursor(crate::enums::MoveDirection::Down, 1),
             _ => {}
         },
         _ => {}
