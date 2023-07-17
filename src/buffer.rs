@@ -45,7 +45,7 @@ impl Buffer {
 
         for c in text.chars() {
             cells.push(Cell {
-                fg: tui::style::Color::White,
+                fg: tui::style::Color::Reset,
                 bg: tui::style::Color::Reset,
                 symbol: c.to_string(),
                 modifier: Modifier::DIM,
