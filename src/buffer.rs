@@ -85,6 +85,10 @@ impl Buffer {
         }
 
         *cursor_x += text.len();
+
+        unsafe {
+            CURSOR_X_POS = *cursor_x;
+        }
     }
 
     pub fn add_text(&mut self, text: String) {
@@ -118,8 +122,12 @@ impl Buffer {
                     *cursor_y = 0
                 }
 
-                if self.rows[current_row].len() < *cursor_x {
-                    *cursor_x = self.rows[current_row].len();
+                unsafe {
+                    *cursor_x = if CURSOR_X_POS > self.rows[*cursor_y + *offset_y].len() {
+                        self.rows[*cursor_y + *offset_y].len()
+                    } else {
+                        CURSOR_X_POS
+                    };
                 }
             }
             MoveDirection::Down => {
@@ -137,6 +145,14 @@ impl Buffer {
                         *cursor_y = self.rows.len() - 1 - *offset_y;
                     }
                 }
+
+                unsafe {
+                    *cursor_x = if CURSOR_X_POS > self.rows[*cursor_y + *offset_y].len() {
+                        self.rows[*cursor_y + *offset_y].len()
+                    } else {
+                        CURSOR_X_POS
+                    };
+                }
             }
 
             MoveDirection::Left => {
@@ -145,6 +161,10 @@ impl Buffer {
                 } else {
                     *offset_x = offset_x.saturating_sub(steps - *cursor_x);
                     *cursor_x = 0;
+                }
+
+                unsafe {
+                    CURSOR_X_POS = *cursor_x;
                 }
             }
             MoveDirection::Right => {
@@ -161,6 +181,10 @@ impl Buffer {
                     if *cursor_x + *offset_x > self.rows[current_row].len() {
                         *cursor_x = self.rows[current_row].len() - *offset_x;
                     }
+                }
+
+                unsafe {
+                    CURSOR_X_POS = *cursor_x;
                 }
             }
         }
