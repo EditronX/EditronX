@@ -15,6 +15,7 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
     let mut list: Vec<(List, Rect)> = vec![];
 
     for (_i, buffer) in tab.buflist.iter().enumerate() {
+        // line numbers
         let line_numbers: Vec<ListItem> = match app.settings.line_number {
             LineNumber::Absolute => buffer
                 .get_rows()
@@ -44,7 +45,7 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
                         Ordering::Less => i - cursor_at,
                     };
 
-                    let padding = app.settings.line_number_padding + 4;
+                    let padding = 4;
 
                     let number = vec![Spans::from(Span::styled(
                         if line_order == Ordering::Equal {
@@ -60,7 +61,10 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
                 .collect(),
         };
 
-        let rows: Vec<_> = buffer
+        let line_numbers = List::new(line_numbers);
+
+        // text rows
+        let rows: Vec<ListItem> = buffer
             .get_rows()
             .iter()
             .map(|cells| {
@@ -86,24 +90,43 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
         let (width, height) = buffer.size;
         let (x, y) = buffer.pos;
 
-        let buffer_rect = Rect::new(
-            x as u16,
-            match app.settings.show_tabs {
-                crate::enums::ShowTab::Never => 0,
-                crate::enums::ShowTab::Always => 1,
-                crate::enums::ShowTab::Multiple => {
-                    if app.tabs.len() > 1 {
-                        1
-                    } else {
-                        0
-                    }
+        let ui_y = match app.settings.show_tabs {
+            crate::enums::ShowTab::Never => 0,
+            crate::enums::ShowTab::Always => 1,
+            crate::enums::ShowTab::Multiple => {
+                if app.tabs.len() > 1 {
+                    1
+                } else {
+                    0
                 }
-            } + y as u16,
-            width as u16,
+            }
+        } + y as u16;
+
+        let buffer_rect = Rect::new(
+            x as u16
+                + match app.settings.line_number {
+                    LineNumber::None => 0,
+                    _ => 5,
+                }
+                + app.settings.line_number_padding as u16
+                - 1,
+            ui_y,
+            width as u16
+                - match app.settings.line_number {
+                    LineNumber::None => 0,
+                    _ => app.settings.line_number_padding as u16 + 5,
+                },
             height as u16,
         );
+        let line_number_rect = Rect::new(
+            x as u16,
+            buffer_rect.y,
+            app.settings.line_number_padding as u16 + 4,
+            buffer_rect.height,
+        );
 
-        list.push((rows, rect))
+        list.push((rows, buffer_rect));
+        list.push((line_numbers, line_number_rect))
     }
 
     list

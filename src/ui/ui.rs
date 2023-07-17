@@ -68,6 +68,11 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
     let buffer = &mut tab.buflist[tab.active_buf];
 
     // CURSOR STUFF
+    let line_num_padding = match app.settings.line_number {
+        crate::enums::LineNumber::None => 0,
+        _ => 4 + app.settings.line_number_padding,
+    };
+
     match app.mode {
         Mode::Command => {
             let cursor_position = app.command.len() as u16;
@@ -80,7 +85,8 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
             let cursor_position = buffer.get_cursor();
 
             frame.set_cursor(
-                chunks[chunks.len() - 2].x + cursor_position.0.saturating_sub(1) as u16,
+                chunks[chunks.len() - 2].x
+                    + (cursor_position.0.saturating_sub(1) + line_num_padding) as u16,
                 chunks[chunks.len() - 2].y + cursor_position.1 as u16,
             );
         }
@@ -88,7 +94,7 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
             let cursor_position = buffer.get_cursor();
 
             frame.set_cursor(
-                chunks[chunks.len() - 2].x + cursor_position.0 as u16,
+                chunks[chunks.len() - 2].x + (cursor_position.0 + line_num_padding) as u16,
                 chunks[chunks.len() - 2].y + cursor_position.1 as u16,
             );
         }

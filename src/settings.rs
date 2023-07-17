@@ -17,7 +17,7 @@ impl Settings {
     pub fn new() -> Self {
         Self {
             line_number: LineNumber::Relative,
-            line_number_padding: 6,
+            line_number_padding: 1,
             show_tabs: ShowTab::Multiple,
             tab_numbering: true,
             split_direction: (SplitVert::Right, SplitHorz::Bottom),
