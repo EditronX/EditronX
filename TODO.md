@@ -3,7 +3,7 @@
 ## Immediate todos
 
 - [] Write text without any bug
-- [] Navigation
+- [x] Navigation
 - [] Implementation of key_event sequence
 - [] Clipboard (Copy, Paste)
 - [] Visual mode
