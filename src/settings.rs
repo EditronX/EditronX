@@ -16,7 +16,7 @@ impl Settings {
     pub fn new() -> Self {
         Self {
             line_number: LineNumber::Relative,
-            show_tabs: ShowTab::Always,
+            show_tabs: ShowTab::Multiple,
             tab_numbering: true,
             split_direction: (SplitVert::Right, SplitHorz::Bottom),
             insert_mode_cursor: SetCursorStyle::BlinkingBar,

@@ -39,7 +39,22 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
         let (width, height) = buffer.size;
         let (x, y) = buffer.pos;
 
-        let rect = Rect::new(x as u16, 1 + y as u16, width as u16, height as u16);
+        let rect = Rect::new(
+            x as u16,
+            match app.settings.show_tabs {
+                crate::enums::ShowTab::Never => 0,
+                crate::enums::ShowTab::Always => 1,
+                crate::enums::ShowTab::Multiple => {
+                    if app.tabs.len() > 1 {
+                        1
+                    } else {
+                        0
+                    }
+                }
+            } + y as u16,
+            width as u16,
+            height as u16,
+        );
 
         list.push((rows, rect))
     }
