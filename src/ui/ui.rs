@@ -36,6 +36,8 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
     let chunks = Layout::default()
         .constraints(chunks_list.as_ref())
         .split(frame.size());
+
+    // render tabs
     match app.settings.show_tabs {
         ShowTab::Never => {}
         ShowTab::Multiple => {
@@ -54,10 +56,12 @@ pub fn ui<B: Backend>(app: &mut App, frame: &mut Frame<B>) {
         chunks[chunks_list.len() - 2].height as usize,
     );
 
+    // render editor
     for (rows_list, rect) in editor_ui(app) {
         frame.render_widget(rows_list, rect);
     }
 
+    // render command ui
     frame.render_widget(command_ui(app), chunks[chunks.len() - 1]);
 
     let tab = &mut app.tabs[app.active_index];
