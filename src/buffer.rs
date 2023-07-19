@@ -57,11 +57,17 @@ impl Buffer {
 
     pub fn new_line(&mut self, below: bool) {
         if below {
-            self.cursor.1 += 1;
-            self.rows.insert(self.cursor.1, vec![]);
+            if self.cursor.1 < self.size.1 - 1 {
+                self.cursor.1 += 1;
+            } else {
+                self.offset.1 += 1;
+            }
         } else {
             self.cursor.1 -= if self.cursor.1 > 0 { 1 } else { 0 };
         }
+
+        self.rows.insert(self.cursor.1 + self.offset.1, vec![]);
+
         self.cursor.0 = 0;
     }
 
@@ -85,6 +91,11 @@ impl Buffer {
         }
 
         *cursor_x += text.len();
+
+        if *cursor_x >= self.size.0 - 1 {
+            *offset_x += text.len() - (self.size.0 - *cursor_x);
+            *cursor_x = self.size.0 - 1;
+        }
 
         unsafe {
             CURSOR_X_POS = *cursor_x;
@@ -131,9 +142,9 @@ impl Buffer {
                 }
             }
             MoveDirection::Down => {
-                if *cursor_y + steps >= size_y {
+                if *cursor_y + steps > size_y {
                     *offset_y += steps - (size_y - *cursor_y);
-                    *cursor_y = size_y;
+                    *cursor_y = size_y - 1;
 
                     if *cursor_y + *offset_y > self.rows.len() - 1 {
                         *offset_y = self.rows.len() - 1 - *cursor_y;
