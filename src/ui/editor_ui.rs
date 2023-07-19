@@ -1,6 +1,8 @@
 use std::cmp::Ordering;
 
+use crossterm::{execute, style::Print, ExecutableCommand};
 use tui::{
+    buffer::Cell,
     layout::Rect,
     style::{Color, Style},
     text::{Span, Spans},
@@ -63,13 +65,23 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
 
         let line_numbers = List::new(line_numbers);
 
-        // text rows
+        execute!(
+            std::io::stdout(),
+            crossterm::cursor::MoveTo(10, 15),
+            Print(format!("{}, {}", buffer.offset.0, buffer.offset.1))
+        )
+        .unwrap();
+
         let rows: Vec<ListItem> = buffer
             .get_rows()
             .iter()
-            .map(|cells| {
-                let cells: Vec<Span> = cells
+            .skip(buffer.offset.1)
+            .take(buffer.size.1)
+            .map(|row| {
+                let cells: Vec<Span> = row
                     .iter()
+                    .skip(buffer.offset.0)
+                    .take(buffer.size.0)
                     .map(|cell| {
                         Span::styled(
                             &cell.symbol,
