@@ -27,7 +27,7 @@ pub struct App {
 
     pub clipboard: Vec<String>,
 
-    pub buf: String,
+    pub key_sequence: Vec<KeyEvent>,
 
     pub command_action: CommandAction,
 
@@ -58,7 +58,7 @@ impl App {
 
             clipboard: Vec::new(),
 
-            buf: String::new(),
+            key_sequence: Vec::new(),
 
             command_action: CommandAction::Command,
             active_index: 0,
@@ -90,6 +90,12 @@ impl App {
 
             if let Event::Key(key_event) = event::read()? {
                 self.key_event = key_event;
+                self.key_sequence.push(key_event);
+
+                // clear key_sequence
+                if key_event.code == KeyCode::Esc {
+                    self.key_sequence.clear();
+                }
 
                 match self.mode {
                     Mode::Normal => handle_normal_mode(self, &mut close)?,

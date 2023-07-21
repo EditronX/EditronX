@@ -1,31 +1,78 @@
+use crate::{app::App, enums::Element, functions::*, parser::key_sequence_parser};
 use std::io::Result;
 
-use crate::{app::App, enums::Mode, functions::*};
-
 pub fn handle_normal_mode(app: &mut App, close: &mut bool) -> Result<()> {
-    let current_tab = &mut app.tabs[app.active_index];
-    let current_buf = &mut current_tab.buflist[current_tab.active_buf];
+    let key_sequence_parsed = key_sequence_parser(&app.key_sequence);
 
-    match app.key_event.code {
-        crossterm::event::KeyCode::Tab => next_tab("", close, app),
-        crossterm::event::KeyCode::BackTab => prev_tab("", close, app),
-
-        crossterm::event::KeyCode::Char(ch) => match ch {
-            ':' => {
-                app.command = String::from(":");
-                app.mode = Mode::Command;
-                app.command_action = crate::enums::CommandAction::Command;
-                app.error.clear();
-                app.info.clear();
-            }
-            'i' => app.mode = Mode::Insert,
-            'h' => current_buf.move_cursor(crate::enums::MoveDirection::Left, 1),
-            'k' => current_buf.move_cursor(crate::enums::MoveDirection::Up, 1),
-            'j' => current_buf.move_cursor(crate::enums::MoveDirection::Down, 1),
-            'l' => current_buf.move_cursor(crate::enums::MoveDirection::Right, 1),
+    if !key_sequence_parsed.is_empty() {
+        match key_sequence_parsed[0] {
             _ => {}
-        },
-        _ => {}
+        }
+
+        match key_sequence_parsed[key_sequence_parsed.len() - 1] {
+            Element::Key(key_event) => match key_event.code {
+                crossterm::event::KeyCode::Tab => next_tab("", close, app),
+                crossterm::event::KeyCode::BackTab => prev_tab("", close, app),
+                crossterm::event::KeyCode::Char(ch) => match ch {
+                    'i' => go_to_insert_mode_i("", close, app),
+                    'a' => go_to_insert_mode_a("", close, app),
+                    ':' => go_to_command_mode("", close, app),
+                    'h' => {
+                        let mut count = 1;
+                        if key_sequence_parsed.len() >= 2 {
+                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
+                                Element::Number(num) => num,
+                                _ => 1,
+                            };
+                        }
+                        for _ in 0..count {
+                            nav_h("", close, app)
+                        }
+                    }
+                    'j' => {
+                        let mut count = 1;
+                        if key_sequence_parsed.len() >= 2 {
+                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
+                                Element::Number(num) => num,
+                                _ => 1,
+                            };
+                        }
+                        for _ in 0..count {
+                            nav_j("", close, app)
+                        }
+                    }
+                    'k' => {
+                        let mut count = 1;
+                        if key_sequence_parsed.len() >= 2 {
+                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
+                                Element::Number(num) => num,
+                                _ => 1,
+                            };
+                        }
+                        for _ in 0..count {
+                            nav_k("", close, app)
+                        }
+                    }
+                    'l' => {
+                        let mut count = 1;
+                        if key_sequence_parsed.len() >= 2 {
+                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
+                                Element::Number(num) => num,
+                                _ => 1,
+                            };
+                        }
+                        for _ in 0..count {
+                            nav_l("", close, app)
+                        }
+                    }
+
+                    _ => {}
+                },
+                _ => {}
+            },
+
+            _ => {}
+        }
     }
 
     Ok(())

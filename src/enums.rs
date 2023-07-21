@@ -1,3 +1,5 @@
+use crossterm::event::KeyEvent;
+
 use crate::editor::Editor;
 
 pub enum CommandAction {
@@ -51,4 +53,10 @@ pub enum SplitVert {
 pub enum SplitHorz {
     Top,
     Bottom,
+}
+
+#[derive(Debug)]
+pub enum Element {
+    Number(usize),
+    Key(KeyEvent),
 }

@@ -13,6 +13,7 @@ mod editor;
 mod enums;
 mod functions;
 mod mode_handlers;
+mod parser;
 mod settings;
 mod tab;
 mod ui;
