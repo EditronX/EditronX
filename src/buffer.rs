@@ -10,7 +10,7 @@ pub struct Buffer {
     rows: Vec<Vec<Cell>>,
     pub title: String,
     cursor: (usize, usize),
-    pub offset: (usize, usize),
+    offset: (usize, usize),
     pub buffer_type: BufferType,
     pub hidden: bool,
     pub pos: (f32, f32),
@@ -38,6 +38,10 @@ impl Buffer {
 
     pub fn get_rows(&self) -> &Vec<Vec<Cell>> {
         &self.rows
+    }
+
+    pub fn get_offset(&self) -> (usize, usize) {
+        self.offset
     }
 
     fn string_to_cells(text: String) -> Vec<Cell> {

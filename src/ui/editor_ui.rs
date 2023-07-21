@@ -19,12 +19,12 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
         let rows: Vec<ListItem> = buffer
             .get_rows()
             .iter()
-            .skip(buffer.offset.1)
+            .skip(buffer.get_offset().1)
             .take(buffer.size.1)
             .map(|row| {
                 let cells: Vec<Span> = row
                     .iter()
-                    .skip(buffer.offset.0)
+                    .skip(buffer.get_offset().0)
                     .take(buffer.size.0)
                     .map(|cell| {
                         Span::styled(
@@ -50,7 +50,7 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
                 .enumerate()
                 .map(|(i, _m)| {
                     let number = vec![Spans::from(Span::styled(
-                        format!("{}", i + 1 + buffer.offset.1 as usize),
+                        format!("{}", i + 1 + buffer.get_offset().1 as usize),
                         Style::default().fg(Color::Reset),
                     ))];
                     ListItem::new(number)
@@ -61,10 +61,10 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
                 .iter()
                 .enumerate()
                 .map(|(i, _m)| {
-                    let i = i + buffer.offset.1;
+                    let i = i + buffer.get_offset().1;
 
                     // Displays the relative line number
-                    let cursor_at = buffer.get_cursor().1 + buffer.offset.1;
+                    let cursor_at = buffer.get_cursor().1 + buffer.get_offset().1;
                     let line_order = cursor_at.cmp(&i);
 
                     let relative_ln = match line_order {
