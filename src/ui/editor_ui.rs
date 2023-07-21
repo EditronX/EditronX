@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 
-use crossterm::{cursor::MoveTo, execute, style::Print};
 use tui::{
     layout::Rect,
     style::{Color, Style},
@@ -73,15 +72,6 @@ pub fn editor_ui(app: &App) -> Vec<(List, Rect)> {
                         Ordering::Greater => cursor_at - i,
                         Ordering::Less => i - cursor_at,
                     };
-
-                    execute!(
-                        std::io::stdout(),
-                        crossterm::cursor::MoveTo(15, 5),
-                        Print(format!("cursor_at: {}", cursor_at)),
-                        MoveTo(15, 6),
-                        Print(format!("{relative_ln}"))
-                    )
-                    .unwrap();
 
                     let padding = 4;
 
