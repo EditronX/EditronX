@@ -17,54 +17,10 @@ pub fn handle_normal_mode(app: &mut App, close: &mut bool) -> Result<()> {
                     'i' => go_to_insert_mode_i("", close, app),
                     'a' => go_to_insert_mode_a("", close, app),
                     ':' => go_to_command_mode("", close, app),
-                    'h' => {
-                        let mut count = 1;
-                        if key_sequence_parsed.len() >= 2 {
-                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
-                                Element::Number(num) => num,
-                                _ => 1,
-                            };
-                        }
-                        for _ in 0..count {
-                            nav_h("", close, app)
-                        }
-                    }
-                    'j' => {
-                        let mut count = 1;
-                        if key_sequence_parsed.len() >= 2 {
-                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
-                                Element::Number(num) => num,
-                                _ => 1,
-                            };
-                        }
-                        for _ in 0..count {
-                            nav_j("", close, app)
-                        }
-                    }
-                    'k' => {
-                        let mut count = 1;
-                        if key_sequence_parsed.len() >= 2 {
-                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
-                                Element::Number(num) => num,
-                                _ => 1,
-                            };
-                        }
-                        for _ in 0..count {
-                            nav_k("", close, app)
-                        }
-                    }
-                    'l' => {
-                        let mut count = 1;
-                        if key_sequence_parsed.len() >= 2 {
-                            count = match key_sequence_parsed[key_sequence_parsed.len() - 2] {
-                                Element::Number(num) => num,
-                                _ => 1,
-                            };
-                        }
-                        for _ in 0..count {
-                            nav_l("", close, app)
-                        }
-                    }
+                    'h' => nav("", close, app),
+                    'j' => nav("", close, app),
+                    'k' => nav("", close, app),
+                    'l' => nav("", close, app),
 
                     _ => {}
                 },

@@ -92,11 +92,6 @@ impl App {
                 self.key_event = key_event;
                 self.key_sequence.push(key_event);
 
-                // clear key_sequence
-                if key_event.code == KeyCode::Esc {
-                    self.key_sequence.clear();
-                }
-
                 match self.mode {
                     Mode::Normal => handle_normal_mode(self, &mut close)?,
                     Mode::Insert => handle_insert_mode(self, &mut close)?,
