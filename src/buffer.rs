@@ -150,9 +150,13 @@ impl Buffer {
                 }
             }
             MoveDirection::Down => {
-                if *cursor_y + steps > size_y && *cursor_y + steps < self.rows.len() - 1 {
-                    *offset_y = subtract(steps, subtract(size_y, *cursor_y));
-                    *cursor_y = size_y - 1;
+                if *cursor_y + steps > size_y {
+                    *offset_y += subtract(steps, subtract(size_y, *cursor_y));
+                    *cursor_y = if size_y > self.rows.len() {
+                        self.rows.len() - 1
+                    } else {
+                        size_y - 1
+                    };
 
                     if *cursor_y + *offset_y > self.rows.len() - 1 {
                         *offset_y = subtract(self.rows.len() - 1, *cursor_y);
@@ -160,7 +164,9 @@ impl Buffer {
                 } else {
                     *cursor_y += steps;
 
-                    *cursor_y = subtract(self.rows.len() - 1, *offset_y);
+                    if *cursor_y + *offset_y > self.rows.len() - 1 {
+                        *cursor_y = subtract(self.rows.len() - 1, *offset_y);
+                    }
                 }
 
                 unsafe {
