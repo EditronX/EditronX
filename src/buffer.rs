@@ -1,6 +1,9 @@
 use tui::{buffer::Cell, style::Modifier};
 
-use crate::enums::{BufferType, MoveDirection};
+use crate::{
+    enums::{BufferType, MoveDirection},
+    util::subtract,
+};
 
 static mut CURSOR_X_POS: usize = 0;
 
@@ -73,6 +76,7 @@ impl Buffer {
         self.rows.insert(self.cursor.1 + self.offset.1, vec![]);
 
         self.cursor.0 = 0;
+        self.offset.0 = 0;
     }
 
     pub fn add_text_in_row(&mut self, text: String) {
@@ -146,19 +150,17 @@ impl Buffer {
                 }
             }
             MoveDirection::Down => {
-                if *cursor_y + steps > size_y {
-                    *offset_y += steps - (size_y - *cursor_y);
+                if *cursor_y + steps > size_y && *cursor_y + steps < self.rows.len() - 1 {
+                    *offset_y = subtract(steps, subtract(size_y, *cursor_y));
                     *cursor_y = size_y - 1;
 
                     if *cursor_y + *offset_y > self.rows.len() - 1 {
-                        *offset_y = self.rows.len() - 1 - *cursor_y;
+                        *offset_y = subtract(self.rows.len() - 1, *cursor_y);
                     }
                 } else {
                     *cursor_y += steps;
 
-                    if *cursor_y + *offset_y > self.rows.len() - 1 {
-                        *cursor_y = self.rows.len() - 1 - *offset_y;
-                    }
+                    *cursor_y = subtract(self.rows.len() - 1, *offset_y);
                 }
 
                 unsafe {
@@ -184,17 +186,17 @@ impl Buffer {
             }
             MoveDirection::Right => {
                 if *cursor_x + steps >= size_x {
-                    *offset_x += steps - (size_x - *cursor_x);
+                    *offset_x += subtract(steps, subtract(size_x, *cursor_x));
                     *cursor_x = size_x;
 
                     if *cursor_x + *offset_x > self.rows[current_row].len() {
-                        *offset_x = self.rows[current_row].len() - *cursor_x;
+                        *offset_x = subtract(self.rows[current_row].len(), *cursor_x)
                     }
                 } else {
                     *cursor_x += steps;
 
                     if *cursor_x + *offset_x > self.rows[current_row].len() {
-                        *cursor_x = self.rows[current_row].len() - *offset_x;
+                        *cursor_x = subtract(self.rows[current_row].len(), *offset_x);
                     }
                 }
 

@@ -17,6 +17,7 @@ mod parser;
 mod settings;
 mod tab;
 mod ui;
+mod util;
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
