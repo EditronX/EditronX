@@ -1,3 +1,3 @@
-# Kass Text Editor
+# Pluto Text Editor
 
 Currently under development
